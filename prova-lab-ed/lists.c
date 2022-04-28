@@ -1,24 +1,23 @@
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdio.h>>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
 
-typedef struct no{
-    int valor;
-    struct no *prox;
-}TNo;
+typedef struct node
+{
+  int value;
+  struct node *next;
+} TNo;
 
 TNo * alocaNo(int k);
 void insereInicio(TNo **p, int k);
+void insereFinal(int k, TNo **p);
+void deletaInicio(TNo **p);
+void deletaFinal(TNo *p);
+int procuraNo(int k, TNo *p);
+void puxaNo(TNo **p, int k);
 void imprimeLista(TNo *p);
-
-int main(void)
-{
-    TNo *prim=NULL;
-    insereInicio(&prim, 12);
-    insereInicio(&prim, 33);
-    insereInicio(&prim, 4);
-    imprimeLista(prim);
-    printf("\n%d", prim->valor);
-}
+void liberaLista(TNo *p);
 
 TNo * alocaNo(int k)
 {
@@ -27,8 +26,8 @@ TNo * alocaNo(int k)
     if (paux==NULL) {
         return NULL;
     }
-    paux->valor = k;
-    paux->prox = NULL;
+    paux->value = k;
+    paux->next = NULL;
     return paux;
 }
 
@@ -39,7 +38,69 @@ void insereInicio(TNo **p, int k)
     if(paux == NULL) {
         return;
     }
-    paux->prox = *p;
+    paux->next = *p;
+    *p = paux;
+}
+
+void insereFinal(int k, TNo **p)
+{
+  TNo *new_node = (TNo *) malloc(sizeof(TNo));
+  if (new_node == NULL) return;
+
+  new_node->value = k;
+  new_node->next = NULL;
+
+  if (*p == NULL) *p = new_node;
+  else
+  {
+    TNo *paux = *p;
+    while (paux->next != NULL)
+      {
+        paux = paux->next;
+      }
+    paux->next = new_node;
+  }
+}
+
+void deletaInicio(TNo **p)
+{
+  TNo *paux = (TNo *) malloc(sizeof(TNo));
+  if (paux == NULL) return;
+
+  paux = *p;
+  *p = paux->next;
+  free(paux);
+}
+
+void deletaFinal(TNo *p)
+{
+  while (p->next->next != NULL)
+    {
+      p = p->next;
+    }
+  free(p->next);
+  p->next = NULL;
+}
+
+int procuraNo(int k, TNo *p)
+{
+  
+  int index = 0;
+  if (!exist_node(k, p)) return -2;
+  while (p != NULL)
+    {
+      index++;  
+      if (p->value == k) return index;
+      p = p->next;
+    }
+  
+}
+
+// puxa para o começo da lista
+void puxaNo(TNo **p, int k) {
+    TNo *paux = (TNo*) calloc(1, sizeof(TNo));
+    if (paux == NULL) return;
+    paux->next = *p; paux->value = k;
     *p = paux;
 }
 
@@ -50,77 +111,20 @@ void imprimeLista(TNo *p)
         return;
     }
     while (p!=NULL) {
-        printf("\n%d", p->valor);
-        p = p->prox;
+        printf("\n%d", p->value);
+        p = p->next;
     }
 }
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
+void liberaLista(TNo *p)
+{
+    TNo *paux = p;
 
-// Defines a simple list that holds int type, declare with NULL
-typedef struct node {
-    int x;
-    struct node *next;
-} node;
-
-// Pushes a node to the beginning of the list
-void push_node(node **n, int x) {
-    node *tmp = (node*) calloc(1, sizeof(node));
-    if (tmp == NULL) return;
-    tmp->next = *n; tmp->x = x;
-    *n = tmp;
-}
-
-// Pushes a node to the end of the list
-void node_add(node **n, int x) {
-    node *new_node = (node*) calloc(1, sizeof(node));
-    if (new_node == NULL) return;
-    new_node->x = x; new_node->next = NULL;
-    if (*n == NULL) *n = new_node;
-    else {
-        node *tmp = *n;
-        while (tmp->next != NULL) {
-            tmp = tmp->next;
-        }
-        tmp->next = new_node;
+    while (p != NULL)
+    {
+        paux = p->next;
+        free(p);
+        p = paux;
     }
-}
-
-// Asserts if node exists
-bool node_exist(node *n, int x) {
-    if (n == NULL) return false;
-    if (n->x == x) return true;
-    node_exist(n->next, x);
-}
-
-// Find index of node, returns -1 if not found
-int search_node(node *n, int x) {
-    int index = 0;
-    if (!node_exist(n, x)) return -1;
-    while (n != NULL) {
-        if (n->x == x) return index;
-        n = n->next;
-        index++;
-    }
-}
-
-// Prints all nodes
-void print_node(node *n) {
-    while (n != NULL) {
-        printf("%d\n", n->x);
-        n = n->next;
-    }
-    return;
-}
-
-// Frees list, valgrind: "All heap blocks were freed -- no leaks are possible"
-void free_node(node *n) {
-    node *tmp = n;
-    while (n != NULL) {
-        tmp = n->next;
-        free(n);
-        n = tmp;
-    }
+    return 0;
 }
