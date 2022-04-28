@@ -1,3 +1,14 @@
+// fopen() cria ou abre um arquivo
+// fclose() fecha um arquivo
+// getc() le um caracter de um arquivo
+// puts() escreve uma string em um arquivo
+// fprintf() escreve um conjunto de dados em um arquivo
+// fscanf() le um conjunto de dados de um arquivo
+
+// 'r' abre um arquivo para leitura (se ele nao existir, recebera um erro)
+// 'w' cria um arquivo de texto para escrita (se ja existir, é substituido)
+// 'a' para adicionar conteudo no fim de um arquivo existente (se ele nao existe, é criado)
+
 #include<stdio.h>
 #include<stdlib.h>
 
